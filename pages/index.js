@@ -5,12 +5,13 @@ import { columns } from '../components/columns'
 import DataTable from 'react-data-table-component';
 import Web3 from 'web3'
 
-function index({hey, results:query, blockNativeWonBlocksJson}) {
+function Index({hey, blockNativeWonBlocksJson}) {
   const [data,setData] = useState(blockNativeWonBlocksJson)
   const [isLoaded, setIsLoaded] = useState(false)
   const [secondBid, setSecondBid] = useState([])
 
   const w3 = new Web3(new Web3.providers.HttpProvider("https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"))
+  
   
   const getSecondHighestBid = async (arrayOfBlocksWon) => {
     const bidArray = []
@@ -77,4 +78,4 @@ function index({hey, results:query, blockNativeWonBlocksJson}) {
       // Pass data to the page via props
       return { props: { blockNativeWonBlocksJson } }
     }
-export default index
+export default Index
