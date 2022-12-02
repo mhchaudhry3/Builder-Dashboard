@@ -24,7 +24,7 @@ export const columns = [
         selector: row => row?.secondHighBid,
         width: '200px',
         // cell: row => (<div>{row.secondHighestBid}</div>)
-        cell: row => (<div>{((row.value-row.secondHighBid)/10**18).toFixed(5)}</div>)
+        cell: row => (<div>{((row.secondHighBid))}</div>)
     },
     {
         name: 'Value',
