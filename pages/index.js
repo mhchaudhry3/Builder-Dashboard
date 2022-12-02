@@ -5,6 +5,18 @@ import { columns } from "../components/columns";
 import DataTable from "react-data-table-component";
 import Web3 from "web3";
 
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+
 function Index({ remainingBidsJson }) {
   console.log(remainingBidsJson);
   const [bidData, setBidData] = useState(remainingBidsJson);
@@ -17,6 +29,40 @@ function Index({ remainingBidsJson }) {
     )
   );
 
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "Block Win by %",
+      },
+    },
+  };
+
+  const data = {
+    labels: bidData.map((data) => data.slot),
+    datasets: [
+      {
+        label: "Margin won by",
+        data: bidData.map((label) => label.value / label.secondHighBid - 1),
+        borderColor: "rgb(30,144,255)",
+        // backgroundColor: "rgba(255, 99, 132, 0.5)",
+      },
+    ],
+  };
+
+  ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    LineElement,
+    Title,
+    Tooltip,
+    Legend
+  );
   const titleStyle = {
     display: "flex",
     alignItems: "center",
@@ -31,8 +77,11 @@ function Index({ remainingBidsJson }) {
         <header style={titleStyle}>
           <p>DreamBoat Won Blocks</p>
         </header>
-        <div className="container">
-          <DataTable columns={columns} data={bidData} />
+        <div>
+          <div>
+            <DataTable columns={columns} data={bidData} />
+            <Line style={{ width: "30%" }} options={options} data={data} />
+          </div>
         </div>
       </div>
     )
