@@ -18,7 +18,6 @@ import {
 import { Line } from "react-chartjs-2";
 
 function Index({ remainingBidsJson }) {
-  console.log(remainingBidsJson);
   const [bidData, setBidData] = useState(remainingBidsJson);
   const [isLoaded, setIsLoaded] = useState(true);
 
@@ -164,8 +163,7 @@ const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
   if (bidArray.length > 0) {
     const bidArrayTimeFiltered = bidArray.filter(
       (response) =>
-        response.timestamp < ts ??
-        console.log(response.value < winningBlockBid[0].value)
+        response.timestamp < ts && response.value < winningBlockBid[0].value
     );
     return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
   } else {
@@ -173,10 +171,10 @@ const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
   }
 };
 export async function getServerSideProps({ req, res }) {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
+  // res.setHeader(
+  //   "Cache-Control",
+  //   "public, s-maxage=10, stale-while-revalidate=59"
+  // );
   // Fetch data from external API
   const remainingBidsJson = await getSecondHighestBids();
   // Pass data to the page via props
