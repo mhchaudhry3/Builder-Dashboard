@@ -21,7 +21,6 @@ function Index({ remainingBidsJson }) {
   console.log(remainingBidsJson);
   const [bidData, setBidData] = useState(remainingBidsJson);
   const [isLoaded, setIsLoaded] = useState(true);
-  const [secondBid, setSecondBid] = useState([]);
 
   const w3 = new Web3(
     new Web3.providers.HttpProvider(
