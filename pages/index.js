@@ -171,10 +171,10 @@ const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
   }
 };
 export async function getServerSideProps({ req, res }) {
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=10, stale-while-revalidate=59"
-  );
+  // res.setHeader(
+  //   "Cache-Control",
+  //   "public, s-maxage=10, stale-while-revalidate=59"
+  // );
   // Fetch data from external API
   const remainingBidsJson = await getSecondHighestBids();
   // Pass data to the page via props
