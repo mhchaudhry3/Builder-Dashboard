@@ -46,8 +46,10 @@ function Index({ remainingBidsJson }) {
     labels: bidData.map((data) => data.slot),
     datasets: [
       {
-        label: "Margin won by",
-        data: bidData.map((label) => label.value / label.secondHighBid - 1),
+        label: "Margin win by %",
+        data: bidData.map((label) =>
+          Math.abs(((label.secondHighBid - label.value) / label.value) * 100)
+        ),
         borderColor: "rgb(30,144,255)",
         // backgroundColor: "rgba(255, 99, 132, 0.5)",
       },
@@ -68,16 +70,26 @@ function Index({ remainingBidsJson }) {
     alignItems: "center",
     justifyContent: "center",
     fontSize: "20px",
+    backgroundColor: "white",
+    color: "black",
+  };
+
+  const tableStyle = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "20px",
+    backgroundColor: "white",
   };
 
   return (
     bidData &&
     isLoaded && (
-      <div>
+      <div style={{ clear: "left", backgroundColor: "black" }}>
         <header style={titleStyle}>
           <p>DreamBoat Won Blocks</p>
         </header>
-        <div>
+        <div style={tableStyle}>
           <div>
             <DataTable columns={columns} data={bidData} />
             <Line style={{ width: "30%" }} options={options} data={data} />
@@ -151,10 +163,12 @@ const getSecondHighestBids = async () => {
 };
 const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
   if (bidArray.length > 0) {
-    const bidArrayFiltered = bidArray.filter(
-      (response) => response.timestamp < ts
+    const bidArrayTimeFiltered = bidArray.filter(
+      (response) =>
+        response.timestamp < ts ??
+        console.log(response.value < winningBlockBid[0].value)
     );
-    return bidArrayFiltered.length > 0 ? bidArrayFiltered[0].value : 0;
+    return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
   } else {
     return 0;
   }

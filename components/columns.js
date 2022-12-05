@@ -17,13 +17,13 @@ export const columns = [
     maxWidth: "550px",
   },
   {
-    name: "Value",
+    name: "Value(eth)",
     selector: (row) => row.value,
-    width: "200px",
+    width: "150px",
     cell: (row) => <div>{(row.value / 10 ** 18).toFixed(7)}</div>,
   },
   {
-    name: "Difference Second Highest Bid",
+    name: "Won by(eth)",
     selector: (row) => row?.secondHighBid,
     width: "200px",
     // cell: row => (<div>{row.secondHighestBid}</div>)
