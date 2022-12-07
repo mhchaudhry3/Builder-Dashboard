@@ -125,24 +125,24 @@ const getSecondHighestBids = async () => {
         block.block_hash === winningBlockHash ? block.timestamp : null
       )
     );
-    const ts = (await w3.eth.getBlock(winningBlockHash)).timestamp;
-    var flashbotsBid = await axios
-      .get(
-        `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
-        {
-          headers: {
-            Accept: "application/json",
-            "Accept-Encoding": "identity",
-          },
-        }
-      )
-      .then((response) =>
-        bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
-      );
+    const ts = winningBlockBid[0].timestamp;
+    // var flashbotsBid = await axios
+    //   .get(
+    //     `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
+    //     {
+    //       headers: {
+    //         Accept: "application/json",
+    //         "Accept-Encoding": "identity",
+    //       },
+    //     }
+    //   )
+    //   .then((response) =>
+    //     bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
+    //   );
     var bloxRoutebid = await axios(
       `https://bloxroute.max-profit.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`
     ).then((response) =>
-      bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
+      bids.push(filterForHighestBids(response, ts, winningBlockBid))
     );
     // var bloxrouteEthicalBid = await axios(`https://bloxroute.ethical.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
     // var bloxrouteRegulatedBid= await axios(`https://bloxroute.regulated.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
@@ -160,21 +160,20 @@ const getSecondHighestBids = async () => {
   return bidArray;
 };
 const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
-  if (bidArray.length > 0) {
-    const bidArrayTimeFiltered = bidArray.filter(
-      (response) =>
-        response.timestamp < ts && response.value < winningBlockBid[0].value
+  if (bidArray?.data.length > 0) {
+    const bidArrayTimeFiltered = bidArray?.data?.filter(
+      (response) => response.timestamp < ts && response.value < winningBlockBid[0].value
     );
-    return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
-  } else {
-    return 0;
+      return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
+    } else {
+      return 0;
   }
 };
 export async function getServerSideProps({ req, res }) {
-  // res.setHeader(
-  //   "Cache-Control",
-  //   "public, s-maxage=10, stale-while-revalidate=59"
-  // );
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=10, stale-while-revalidate=59"
+  );
   // Fetch data from external API
   const remainingBidsJson = await getSecondHighestBids();
   // Pass data to the page via props
