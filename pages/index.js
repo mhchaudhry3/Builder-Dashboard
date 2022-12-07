@@ -102,7 +102,7 @@ const w3 = new Web3(
     "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"
   )
 );
-const getSecondHighestBids = async () => {
+const secondHighestBids = async () => {
   const bidArray = [];
   const url = `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/proposer_payload_delivered?limit=20`;
   const arrayOfBlocksWon = await axios({
@@ -175,7 +175,7 @@ export async function getServerSideProps({ req, res }) {
     "public, s-maxage=10, stale-while-revalidate=59"
   );
   // Fetch data from external API
-  const remainingBidsJson = await getSecondHighestBids();
+  const remainingBidsJson = await secondHighestBids();
   // Pass data to the page via props
   return { props: { remainingBidsJson } };
 }
