@@ -3,7 +3,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { columns } from "../components/columns";
 import DataTable from "react-data-table-component";
-import Web3 from "web3";
 
 import {
   Chart as ChartJS,
@@ -20,12 +19,6 @@ import { Line } from "react-chartjs-2";
 function Index({ remainingBidsJson }) {
   const [bidData, setBidData] = useState(remainingBidsJson);
   const [isLoaded, setIsLoaded] = useState(true);
-
-  const w3 = new Web3(
-    new Web3.providers.HttpProvider(
-      "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"
-    )
-  );
 
   const options = {
     responsive: true,
@@ -97,11 +90,7 @@ function Index({ remainingBidsJson }) {
     )
   );
 }
-const w3 = new Web3(
-  new Web3.providers.HttpProvider(
-    "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"
-  )
-);
+
 const secondHighestBids = async () => {
   const bidArray = [];
   const url = `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/proposer_payload_delivered?limit=20`;
@@ -126,19 +115,19 @@ const secondHighestBids = async () => {
       )
     );
     const ts = winningBlockBid[0].timestamp;
-    // var flashbotsBid = await axios
-    //   .get(
-    //     `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
-    //     {
-    //       headers: {
-    //         Accept: "application/json",
-    //         "Accept-Encoding": "identity",
-    //       },
-    //     }
-    //   )
-    //   .then((response) =>
-    //     bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
-    //   );
+    var flashbotsBid = await axios
+      .get(
+        `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "Accept-Encoding": "identity",
+          },
+        }
+      )
+      .then((response) =>
+        bids.push(filterForHighestBids(response, ts, winningBlockBid))
+      );
     var bloxRoutebid = await axios(
       `https://bloxroute.max-profit.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`
     ).then((response) =>
