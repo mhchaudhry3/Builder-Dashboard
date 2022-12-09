@@ -140,11 +140,18 @@ const getSecondHighestBids = async () => {
       .then((response) =>
         bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
       );
-    var bloxRoutebid = await axios(
-      `https://bloxroute.max-profit.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`
-    ).then((response) =>
-      bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
-    );
+    var bloxRoutebid = await axios
+      .get(
+        `https://bloxroute.max-profit.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
+        {
+          headers: {
+            Accept: "application/json",
+          },
+        }
+      )
+      .then((response) =>
+        bids.push(filterForHighestBids(response, ts, winningBlockBid))
+      );
     // var bloxrouteEthicalBid = await axios(`https://bloxroute.ethical.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
     // var bloxrouteRegulatedBid= await axios(`https://bloxroute.regulated.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
     // var edenBid= await axios(`https://relay.edennetwork.io/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
@@ -161,11 +168,10 @@ const getSecondHighestBids = async () => {
   return bidArray;
 };
 const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
-  if (bidArray.length > 0) {
-    const bidArrayTimeFiltered = bidArray.filter(
+  if (bidArray != undefined) {
+    const bidArrayTimeFiltered = bidArray?.data?.filter(
       (response) =>
-        response.timestamp < ts ??
-        console.log(response.value < winningBlockBid[0].value)
+        response.timestamp < ts && response.value < winningBlockBid[0].value
     );
     return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
   } else {
