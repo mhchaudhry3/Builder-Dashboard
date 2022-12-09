@@ -134,6 +134,7 @@ const secondHighestBids = async () => {
         {
           headers: {
             Accept: "application/json",
+            "Accept-Encoding": "identity",
           },
         }
       )
@@ -157,13 +158,14 @@ const secondHighestBids = async () => {
 };
 const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
   if (bidArray != undefined) {
+    // console.log(winningBlockBid[0].slot);
     const bidArrayTimeFiltered = bidArray?.data?.filter(
       (response) =>
         response.timestamp < ts && response.value < winningBlockBid[0].value
     );
-      return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
-    } else {
-      return 0;
+    return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
+  } else {
+    return 0;
   }
 };
 export async function getServerSideProps({ req, res }) {
