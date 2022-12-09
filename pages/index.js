@@ -3,7 +3,6 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { columns } from "../components/columns";
 import DataTable from "react-data-table-component";
-import Web3 from "web3";
 
 import {
   Chart as ChartJS,
@@ -18,15 +17,8 @@ import {
 import { Line } from "react-chartjs-2";
 
 function Index({ remainingBidsJson }) {
-  console.log(remainingBidsJson);
   const [bidData, setBidData] = useState(remainingBidsJson);
   const [isLoaded, setIsLoaded] = useState(true);
-
-  const w3 = new Web3(
-    new Web3.providers.HttpProvider(
-      "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"
-    )
-  );
 
   const options = {
     responsive: true,
@@ -98,12 +90,8 @@ function Index({ remainingBidsJson }) {
     )
   );
 }
-const w3 = new Web3(
-  new Web3.providers.HttpProvider(
-    "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/"
-  )
-);
-const getSecondHighestBids = async () => {
+
+const secondHighestBids = async () => {
   const bidArray = [];
   const url = `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/proposer_payload_delivered?limit=20`;
   const arrayOfBlocksWon = await axios({
@@ -126,7 +114,7 @@ const getSecondHighestBids = async () => {
         block.block_hash === winningBlockHash ? block.timestamp : null
       )
     );
-    const ts = (await w3.eth.getBlock(winningBlockHash)).timestamp;
+    const ts = winningBlockBid[0].timestamp;
     var flashbotsBid = await axios
       .get(
         `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
@@ -138,7 +126,7 @@ const getSecondHighestBids = async () => {
         }
       )
       .then((response) =>
-        bids.push(filterForHighestBids(response?.data, ts, winningBlockBid))
+        bids.push(filterForHighestBids(response, ts, winningBlockBid))
       );
     var bloxRoutebid = await axios
       .get(
@@ -173,9 +161,9 @@ const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
       (response) =>
         response.timestamp < ts && response.value < winningBlockBid[0].value
     );
-    return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
-  } else {
-    return 0;
+      return bidArrayTimeFiltered?.length > 0 ? bidArrayTimeFiltered[0].value : 0;
+    } else {
+      return 0;
   }
 };
 export async function getServerSideProps({ req, res }) {
@@ -184,7 +172,7 @@ export async function getServerSideProps({ req, res }) {
     "public, s-maxage=10, stale-while-revalidate=59"
   );
   // Fetch data from external API
-  const remainingBidsJson = await getSecondHighestBids();
+  const remainingBidsJson = await secondHighestBids();
   // Pass data to the page via props
   return { props: { remainingBidsJson } };
 }
