@@ -52,8 +52,8 @@ export const columns = [
       <div>
         {row.builder_pubkey ===
         "0x8000008a03ebae7d8ab2f66659bd719a698b2e74097d1e423df85e0d58571140527c15052a36c19878018aaebe8a6fea"
-          ? ((row.value * 0.036) / 10 ** 18).toFixed(7)
-          : ((row.value * 0.005) / 10 ** 18).toFixed(7)}
+          ? ((row.value * 0.05) / 10 ** 18).toFixed(7)
+          : ((row.value * 0.003) / 10 ** 18).toFixed(7)}
       </div>
     ),
   },
