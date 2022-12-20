@@ -70,7 +70,13 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
   return (
     bidData &&
     isLoaded && (
-      <div style={{ clear: "left", backgroundColor: "black" }}>
+      <div
+        style={{
+          clear: "left",
+          backgroundColor: "black",
+          minInlineSize: "fit-content"
+        }}
+      >
         <header style={titleStyle}>
           <p>DreamBoat Won Blocks</p>
         </header>
