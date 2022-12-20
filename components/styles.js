@@ -14,7 +14,7 @@ export const tableStyle = {
   fontSize: "20px",
   backgroundColor: "white",
   paddingLeft: "1rem",
-  paddingBottom: ".5rem",
+  paddingBottom: "1rem",
 };
 
 export const accountDataBox = {
