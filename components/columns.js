@@ -47,7 +47,7 @@ export const columns = [
   {
     name: "Block Profit",
     selector: (row) => row?.secondHighBid,
-    width: "100px",
+    width: "105px",
     cell: (row) => (
       <div>
         {row.builder_pubkey ===
