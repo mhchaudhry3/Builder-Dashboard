@@ -70,7 +70,13 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
   return (
     bidData &&
     isLoaded && (
-      <div style={{ clear: "left", backgroundColor: "black" }}>
+      <div
+        style={{
+          clear: "left",
+          backgroundColor: "black",
+          minInlineSize: "fit-content",
+        }}
+      >
         <header style={titleStyle}>
           <p>DreamBoat Won Blocks</p>
         </header>
@@ -206,13 +212,20 @@ const getBlocknativeBuilderBalance = async () => {
   const walletBalance = await provider.getBalance(
     "0xBaF6dC2E647aeb6F510f9e318856A1BCd66C5e19"
   );
+  const gnosisWalletSafe = await provider.getBalance(
+    "0xA273ee8946e0f058bdFAfD6Ae04b1517F5245f11"
+  );
   const walletBalanceConvertedToEther = ethers.utils.formatEther(walletBalance);
+  const gnosisWalletSafeConvertedToEther =
+    ethers.utils.formatEther(gnosisWalletSafe);
   const startingBalanceInEther = 1.5;
-  const balanceDiff = walletBalanceConvertedToEther - startingBalanceInEther;
+  console.log(walletBalanceConvertedToEther, gnosisWalletSafeConvertedToEther);
+  const balanceDiff =
+    parseFloat(walletBalanceConvertedToEther) +
+    parseFloat(gnosisWalletSafeConvertedToEther) -
+    startingBalanceInEther;
   return balanceDiff;
 };
-
-const getCurrentSlotNumber = async () => {};
 
 export async function getServerSideProps({ req, res }) {
   res.setHeader(
