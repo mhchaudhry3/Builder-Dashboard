@@ -24,7 +24,7 @@ import {
 import { Line } from "react-chartjs-2";
 
 const node =
-  "https://white-hidden-brook.discover.quiknode.pro/fd442d08c67ae0a6267689dcf8d3f3e8c08f4aa5/";
+  "https://necessary-newest-waterfall.quiknode.pro/048d029a37818e6a8dfb4dc4eeeebc8db889913e/";
 const provider = new ethers.providers.JsonRpcProvider(node);
 
 function Index({ remainingBidsJson, blockData, builderProfit }) {
