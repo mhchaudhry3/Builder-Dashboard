@@ -44,19 +44,19 @@ export const columns = [
     width: "120px",
     cell: (row) => <div>{row.sinceLastWonBlock}</div>,
   },
-  {
-    name: "Block Profit",
-    selector: (row) => row?.secondHighBid,
-    width: "105px",
-    cell: (row) => (
-      <div>
-        {row.builder_pubkey ===
-        "0x8000008a03ebae7d8ab2f66659bd719a698b2e74097d1e423df85e0d58571140527c15052a36c19878018aaebe8a6fea"
-          ? ((row.value * 0.05) / 10 ** 18).toFixed(7)
-          : "N/A"}
-          </div>
-          ),
-        },
+  // {
+  //   name: "Block Profit",
+  //   selector: (row) => row?.secondHighBid,
+  //   width: "105px",
+  //   cell: (row) => (
+  //     <div>
+  //       {row.builder_pubkey ===
+  //       "0x8000008a03ebae7d8ab2f66659bd719a698b2e74097d1e423df85e0d58571140527c15052a36c19878018aaebe8a6fea"
+  //         ? ((row.value * 0.05) / 10 ** 18).toFixed(7)
+  //         : "N/A"}
+  //         </div>
+  //         ),
+  //       },
   {
     name: "Bid Efficiency",
     width: "105px",
