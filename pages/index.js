@@ -28,6 +28,7 @@ const node =
 const provider = new ethers.providers.JsonRpcProvider(node);
 
 function Index({ remainingBidsJson, blockData, builderProfit }) {
+  console.log(remainingBidsJson)
   const [bidData, setBidData] = useState(remainingBidsJson);
   const [isLoaded, setIsLoaded] = useState(true);
 
@@ -48,9 +49,10 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
     labels: bidData.map((data) => data.slot),
     datasets: [
       {
-        label: "Margin win by %",
+        label: "Margin lost by %",
         data: bidData.map((label) =>
-          Math.abs(((label.secondHighBid - label.value) / label.value) * 100)
+        Math.abs(((label.blocknativeBid-label.winningBid)/ label.winningBid) * 100)
+        // Math.abs(((label.secondHighBid - label.value) / label.value) * 100)
         ),
         borderColor: "rgb(30,144,255)",
       },
@@ -77,10 +79,10 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
           minInlineSize: "fit-content",
         }}
       >
-        <header style={titleStyle}>
+       <header style={titleStyle}>
           <p>DreamBoat Won Blocks</p>
         </header>
-        <div style={accountDataBox}>
+        {/* <div style={accountDataBox}>
           <div>
             <div style={TitleHeader}>Current BaseFee</div>
             <div style={RowStyle}>
@@ -91,7 +93,7 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
             <div style={TitleHeader}>Builder Profit(eth)</div>
             <div style={RowStyle}>Eth: {builderProfit.toFixed(7)}</div>
           </div>
-        </div>
+        </div> */}
         <div style={tableStyle}>
           <div>
             <DataTable
@@ -101,7 +103,7 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
             />
             <Line options={options} data={data} />
           </div>
-        </div>
+        </div> 
       </div>
     )
   );
@@ -109,88 +111,67 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
 
 const secondHighestBids = async () => {
   const bidArray = [];
-  const url = `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/proposer_payload_delivered?limit=21`;
-  const arrayOfBlocksWon = await axios({
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    method: "get",
-    url: url,
-  });
-  for (var x = 0; x < arrayOfBlocksWon?.data.length - 1; x++) {
+  const builder_pubkey_flashbots= "0xb7535857fb9559a6858fadecb069b8430053d02e8d5fc35ebde576f8d28c8f3b10e1316ad9a3f13fb80ad5a27dd293f6"
+  const url = `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`;
+  const blocknativeFlashbotsBuilderBids= `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?builder_pubkey=${builder_pubkey_flashbots}`
+  fetch(blocknativeFlashbotsBuilderBids).then(response => response.json()).then(response => console.log(response.slot))
+  const arrayOfBlocksWon = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`).then(response => response.json())
+  console.log(arrayOfBlocksWon)
+  // console.log(arrayOfBlocksWon)
+  for (var x = 0; x < 24; x++) {
     const bids = [];
-    const winningBlockHash = await axios(
-      `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/proposer_payload_delivered?slot=${arrayOfBlocksWon.data[x].slot}`
-    ).then((response) => response?.data[0]?.block_hash);
-    const winningBlockBid = await axios(
-      `https://builder-relay-mainnet.blocknative.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`
-    ).then((response) =>
-      response.data.filter((block) =>
-        block.block_hash === winningBlockHash ? block.timestamp : null
-      )
-    );
-    const ts = winningBlockBid[0].timestamp;
-    var flashbotsBid = await fetch(
-      `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then(
-        (resp) => resp.json() // this returns a promise
-      )
-      .then((response) =>
-        bids.push(filterForHighestBids(response, ts, winningBlockBid))
-      );
-    var bloxRoutebid = await fetch(
-      `https://bloxroute.max-profit.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon.data[x].slot}`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then(
-        (resp) => resp.json() // this returns a promise
-      )
-      .then((response) =>
-        bids.push(filterForHighestBids(response, ts, winningBlockBid))
-      );
-    // var bloxrouteEthicalBid = await axios(`https://bloxroute.ethical.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
-    // var bloxrouteRegulatedBid= await axios(`https://bloxroute.regulated.blxrbdn.com/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
-    // var edenBid= await axios(`https://relay.edennetwork.io/relay/v1/data/bidtraces/builder_blocks_received?slot=${arrayOfBlocksWon[x].slot}`).then(response => (bids.push(filterForHighestBid(response?.data, ts))))
-    const indexOfSlot = arrayOfBlocksWon.data.findIndex(
-      ({ slot }) => slot === arrayOfBlocksWon.data[x].slot
-    );
-    const sinceLastWonSlot =
-      arrayOfBlocksWon.data[x].slot - arrayOfBlocksWon.data[x + 1].slot;
-    const updatedTodo = {
-      ...arrayOfBlocksWon.data[indexOfSlot],
-      secondHighBid: Math.max(...bids),
-      sinceLastWonBlock: sinceLastWonSlot,
-    };
-    arrayOfBlocksWon.data[indexOfSlot] = updatedTodo;
-    bidArray.push(updatedTodo);
-  }
-  return bidArray;
-};
-const filterForHighestBids = (bidArray, ts, winningBlockBid) => {
-  if (bidArray !== null) {
-    if (bidArray?.length > 0) {
-      const bidArrayTimeFiltered = bidArray?.filter(
-        (response) =>
-          response.timestamp < ts && response.value < winningBlockBid[0].value
-      );
-      return bidArrayTimeFiltered?.length > 0
-        ? bidArrayTimeFiltered[0].value
-        : 0;
-    } else {
-      return 0;
+    const currentSlotBlocknativeBid=await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?builder_pubkey=${builder_pubkey_flashbots}&slot=${arrayOfBlocksWon[x].slot}`)
+    .then(response =>(response.json()))
+    // console.log("higher", currentSlotBlocknativeBid)
+    if(currentSlotBlocknativeBid.length === 0){
+      bidArray.push(
+        { slot: arrayOfBlocksWon[x].slot,
+          blocknativeBid: 0,
+          winningBid: arrayOfBlocksWon[x].value,
+        inTime: "false",
+        blockSubmitted: "no block submitted",
+      builder_address: arrayOfBlocksWon[x].builder_pubkey})
     }
+    if(currentSlotBlocknativeBid != [] && currentSlotBlocknativeBid != undefined)
+    {
+      // console.log('if', currentSlotBlocknativeBid)
+      const winningBlock = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered?slot=${arrayOfBlocksWon[x].slot}`).then(response => response.json())
+      const winningBlockHash = winningBlock[0]?.block_hash;
+
+      const winningBidTS = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?block_hash=${winningBlockHash}`)
+      .then(response =>(response.json()))
+      .then(response => response[0].timestamp_ms)
+      for(var i = 0; i<currentSlotBlocknativeBid.length - 1; i++){
+        if(currentSlotBlocknativeBid[x]?.timestamp_ms <= winningBidTS) {
+          console.log('wonbid', currentSlotBlocknativeBid[x].slot)
+          bidArray.push(
+            { slot: winningBlock[0].slot,
+              blocknativeBid: currentSlotBlocknativeBid[x].value,
+              winningBid: winningBlock[0].value,
+            inTime: "true",
+            blockSubmitted:"Submitted",
+            builder_address: winningBlock[0].builder_pubkey
+          }
+              )
+              break;
+              // console.log(bids, "bids")
+            } else if(i == currentSlotBlocknativeBid.length-1) {
+              bidArray.push(
+                { slot: winningBlock[0].slot,
+                  blocknativeBid: currentSlotBlocknativeBid[x].value,
+                  winningBid: winningBlock[0].value,
+                inTime: "false",
+                blockSubmitted:"Late",
+                builder_address: winningBlock[0].builder_pubkey
+              })
+            } 
+        }
+      }
   }
-};
+
+
+  return bidArray;
+}
 
 const getBlockPrices = async () => {
   const blockPriceResponse = await fetch(
