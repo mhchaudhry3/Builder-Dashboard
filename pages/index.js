@@ -119,7 +119,7 @@ const secondHighestBids = async () => {
   const arrayOfBlocksWon = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`).then(response => response.json())
   console.log(arrayOfBlocksWon)
   // console.log(arrayOfBlocksWon)
-  for (var x = 0; x < 24; x++) {
+  for (var x = 0; x < 40; x++) {
     const bids = [];
     const currentSlotBlocknativeBid=await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?builder_pubkey=${builder_pubkey_flashbots}&slot=${arrayOfBlocksWon[x].slot}`)
     .then(response =>(response.json()))
