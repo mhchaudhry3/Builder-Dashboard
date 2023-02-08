@@ -110,6 +110,7 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
 }
 
 const secondHighestBids = async () => {
+  console.log('hello')
   const bidArray = [];
   const builder_pubkey_flashbots= "0xb7535857fb9559a6858fadecb069b8430053d02e8d5fc35ebde576f8d28c8f3b10e1316ad9a3f13fb80ad5a27dd293f6"
   const url = `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`;
