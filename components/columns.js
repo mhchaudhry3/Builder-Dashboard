@@ -42,7 +42,11 @@ export const columns = [
     name: "Bid status",
     selector: (row) => row.blockSubmitted,
     width: "125px",
-    cell: (row) => <div>{(row.blockSubmitted)}</div>
+    cell: (row) =>  <div>
+      {row.builder_address === "0xb7535857fb9559a6858fadecb069b8430053d02e8d5fc35ebde576f8d28c8f3b10e1316ad9a3f13fb80ad5a27dd293f6"
+        ? "won bid"
+        : row.blockSubmitted}
+    </div>
   },
   // {
   //   name: <div style={{ overflow: "wrap" }}>Slots since won Block</div>,
