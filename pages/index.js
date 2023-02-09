@@ -80,7 +80,7 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
         }}
       >
        <header style={titleStyle}>
-          <p>DreamBoat Won Blocks</p>
+          <p>Stealth Builder to flashbots</p>
         </header>
         {/* <div style={accountDataBox}>
           <div>
@@ -110,32 +110,27 @@ function Index({ remainingBidsJson, blockData, builderProfit }) {
 }
 
 const secondHighestBids = async () => {
-  console.log('hello')
   const bidArray = [];
   const builder_pubkey_flashbots= "0xb7535857fb9559a6858fadecb069b8430053d02e8d5fc35ebde576f8d28c8f3b10e1316ad9a3f13fb80ad5a27dd293f6"
   const url = `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`;
   const blocknativeFlashbotsBuilderBids= `https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?builder_pubkey=${builder_pubkey_flashbots}`
   fetch(blocknativeFlashbotsBuilderBids).then(response => response.json()).then(response => console.log(response.slot))
   const arrayOfBlocksWon = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered`).then(response => response.json())
-  console.log(arrayOfBlocksWon)
-  // console.log(arrayOfBlocksWon)
   for (var x = 0; x < 40; x++) {
     const bids = [];
     const currentSlotBlocknativeBid=await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/builder_blocks_received?builder_pubkey=${builder_pubkey_flashbots}&slot=${arrayOfBlocksWon[x].slot}`)
     .then(response =>(response.json()))
-    // console.log("higher", currentSlotBlocknativeBid)
     if(currentSlotBlocknativeBid.length === 0){
       bidArray.push(
         { slot: arrayOfBlocksWon[x].slot,
           blocknativeBid: 0,
           winningBid: arrayOfBlocksWon[x].value,
         inTime: "false",
-        blockSubmitted: "no block submitted",
+        blockSubmitted: "no bid submitted",
       builder_address: arrayOfBlocksWon[x].builder_pubkey})
     }
     if(currentSlotBlocknativeBid != [] && currentSlotBlocknativeBid != undefined)
     {
-      // console.log('if', currentSlotBlocknativeBid)
       const winningBlock = await fetch(`https://boost-relay.flashbots.net/relay/v1/data/bidtraces/proposer_payload_delivered?slot=${arrayOfBlocksWon[x].slot}`).then(response => response.json())
       const winningBlockHash = winningBlock[0]?.block_hash;
 
@@ -150,19 +145,18 @@ const secondHighestBids = async () => {
               blocknativeBid: currentSlotBlocknativeBid[x].value,
               winningBid: winningBlock[0].value,
             inTime: "true",
-            blockSubmitted:"Submitted",
+            blockSubmitted:"Submitted bid",
             builder_address: winningBlock[0].builder_pubkey
           }
               )
               break;
-              // console.log(bids, "bids")
             } else if(i == currentSlotBlocknativeBid.length-1) {
               bidArray.push(
                 { slot: winningBlock[0].slot,
                   blocknativeBid: currentSlotBlocknativeBid[x].value,
                   winningBid: winningBlock[0].value,
                 inTime: "false",
-                blockSubmitted:"Late",
+                blockSubmitted:"bid submitted late",
                 builder_address: winningBlock[0].builder_pubkey
               })
             } 

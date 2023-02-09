@@ -39,7 +39,7 @@ export const columns = [
     ),
   },
   {
-    name: "Block submitted?",
+    name: "Bid status",
     selector: (row) => row.blockSubmitted,
     width: "125px",
     cell: (row) => <div>{(row.blockSubmitted)}</div>
